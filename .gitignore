@@ -86,3 +86,7 @@ id_ed25519
 # Local logs
 *.log
 logs/
+
+# Local credentials - never commit
+tocken/
+token/

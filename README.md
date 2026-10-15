@@ -7,6 +7,7 @@ A production-grade, enterprise-ready DevOps automation platform built incrementa
 ## Phases Overview
 - **[Phase 1: Application Foundation & Health Checks](#phase-1-application-foundation--health-checks)**
 - **[Phase 2: Docker Containerization & Orchestration](#phase-2-docker-containerization--orchestration)**
+- **[Platform GUI Dashboard](#platform-gui-dashboard)**
 
 ---
 
@@ -17,14 +18,22 @@ devops-automation-platform/
 ├── app/
 │   ├── __init__.py           # Application Factory (create_app), Blueprint registration, Error handlers
 │   ├── config.py             # Environment configurations (Development, Testing, Production)
-│   └── routes/
-│       ├── __init__.py
-│       ├── api.py            # API routes: index (/), /api/v1/ping, /api/v1/info
-│       └── health.py         # DevOps probes: /health, /healthz (liveness), /ready (readiness)
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── api.py            # API & GUI routes: /, /dashboard, /api/v1/ping, /api/v1/info, /api/v1/system/metrics, /api/v1/deployments
+│   │   └── health.py         # DevOps probes: /health, /healthz (liveness), /ready (readiness)
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── dashboard.css # Modern dark-theme responsive design system
+│   │   └── js/
+│   │       └── dashboard.js  # Telemetry streaming, live canvas charts, and diagnostic probe runner
+│   └── templates/
+│       └── dashboard.html    # Semantic, accessible HTML5 dashboard template
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py           # Pytest test fixtures (isolated test client, test app)
 │   ├── test_api.py           # Unit tests for root, ping, info, and 404/500 handlers
+│   ├── test_dashboard.py     # Unit tests for GUI dashboard, system metrics, and deployments
 │   └── test_health.py        # Unit tests for /health, /healthz, and /ready probes
 ├── .dockerignore             # Excludes .git, .venv, cache, tests, keys, secrets from Docker context
 ├── .gitignore                # Excludes virtualenvs, cache, credentials, logs from Git
@@ -38,16 +47,40 @@ devops-automation-platform/
 
 ---
 
+## Platform GUI Dashboard
+
+The platform includes a modern, high-performance GUI served directly by Flask and Gunicorn at `http://localhost:5000/dashboard`.
+
+### Key Features:
+- **Dark Theme & Modern Typography**: Clean slate palette (`#0b0f19`), Inter & JetBrains Mono typography, smooth glassmorphism.
+- **7 Phased Sections**:
+  1. **Overview**: Metric cards, real-time charts, recent deployment table, and live endpoint tester.
+  2. **CI/CD Pipeline**: Visual workflow for Pytest, Docker build, and upcoming GitLab CI/CD stages.
+  3. **Docker Containers**: Runtime inspection for `devops-automation-app`, non-root security audit, and commands.
+  4. **Kubernetes**: Roadmap and upcoming manifest architecture preview (Phase 4).
+  5. **Monitoring**: Prometheus, Grafana, and Loki stack roadmap (Phase 5).
+  6. **Security Scanning**: Hardening audit and Trivy container scanning roadmap (Phase 6).
+  7. **Infrastructure**: Live host hardware metrics and Terraform AWS target architecture (Phase 7).
+- **Real-Time Telemetry & Charts**: Live Canvas-based dual-line chart tracking actual Linux CPU and Memory utilization from `/proc/stat` and `/proc/meminfo`.
+- **Interactive Probe Console**: One-click HTTP tester executing live requests against `/health`, `/healthz`, `/ready`, `/api/v1/ping`, `/api/v1/info`, and `/api/v1/system/metrics` with latency benchmarks.
+- **Authentic Git Milestones**: Deployment activity table driven by real repository commit history.
+- **Responsive Layout**: Adapts seamlessly to desktop, tablet, and mobile screens with a slide-out drawer.
+
+---
+
 ## Endpoints
 
 | Endpoint | Method | Purpose | DevOps Context |
 | :--- | :--- | :--- | :--- |
-| `/` | `GET` | API Root / Service Index | Route discovery and welcome banner |
+| `/` | `GET` | API Root / Service Index | Route discovery and welcome banner (redirects to GUI with `?view=gui`) |
+| `/dashboard` | `GET` | Platform GUI Dashboard | Web UI served by Flask with real-time telemetry |
 | `/health` | `GET` | Health Status & Metadata | Load balancer checks, uptime, version, and metadata |
 | `/healthz` | `GET` | Liveness Probe | Kubernetes liveness & Docker HEALTHCHECK (restarts pod/container if failed) |
 | `/ready` | `GET` | Readiness Probe | Kubernetes readiness probe (removes pod from service traffic if failed) |
 | `/api/v1/ping` | `GET` | Latency / Connectivity Test | Rapid network connectivity check |
 | `/api/v1/info` | `GET` | Host & Runtime Info | Multi-node cluster debugging & OS/runtime visibility |
+| `/api/v1/system/metrics` | `GET` | Real OS Resource Telemetry | CPU cores/load, memory MB/percent, and disk metrics |
+| `/api/v1/deployments` | `GET` | Deployment & Commit History | Real Git commit log or verified release milestones |
 
 ---
 
@@ -78,7 +111,7 @@ pip install -r requirements-dev.txt
 
 ### 4. Run Unit Tests & Coverage
 ```bash
-# Run pytest with verbose output
+# Run pytest with verbose output (12 tests)
 pytest -v
 
 # Run pytest with code coverage report
@@ -92,6 +125,7 @@ pytest --cov=app tests/
 export FLASK_ENV=development
 python3 -m app
 ```
+Access the dashboard at `http://127.0.0.1:5000/dashboard`.
 
 #### Production Mode (Gunicorn WSGI Server):
 ```bash
@@ -133,6 +167,11 @@ docker ps --filter "name=devops-automation-app"
 ```
 *(Notice the `(healthy)` indicator in the `STATUS` column once the health check runs).*
 
+#### Open GUI Dashboard in Browser
+```text
+http://localhost:5000/dashboard
+```
+
 #### Inspect Container Health Details
 ```bash
 docker inspect --format='{{json .State.Health}}' devops-automation-app | jq
@@ -145,27 +184,6 @@ docker logs -f devops-automation-app
 
 # View last 50 lines with timestamps
 docker logs --tail 50 -t devops-automation-app
-```
-
-#### Test Endpoints via cURL
-```bash
-# Root endpoint
-curl -s http://127.0.0.1:5000/ | jq
-
-# Health endpoint
-curl -s http://127.0.0.1:5000/health | jq
-
-# Liveness probe
-curl -s http://127.0.0.1:5000/healthz | jq
-```
-
-#### Verify Non-Root User Execution
-```bash
-docker exec devops-automation-app whoami
-# Output: appuser
-
-docker exec devops-automation-app id
-# Output: uid=10001(appuser) gid=10001(appgroup) groups=10001(appgroup)
 ```
 
 #### Stop and Remove Container
@@ -257,7 +275,7 @@ docker compose down
 > **Answer**: If a service only has a liveness probe and experiences temporary overload or database latency, the probe might fail and cause Kubernetes to restart the container, which worsens the issue (causing a cascading restart storm). A readiness probe stops traffic from being routed to the container until it catches up, without restarting the process.
 
 #### Q2: Why is it bad practice to run containers as the default root user?
-> **Answer**: Running as root violates the Principle of Least Privilege. Because the Linux kernel is shared between the container and host, any container breakout exploit (kernel vulnerabilities, volume mount exploits, or docker socket exposure) could grant an attacker root access to the entire host machine. Non-root users restrict damage to unprivileged space.
+> **Answer**: Running as root violates the Principle of Least Privilege. Because the Linux kernel is shared between the container and the host, any container breakout exploit (kernel vulnerabilities, volume mount exploits, or docker socket exposure) could grant an attacker root access to the entire host machine. Non-root users restrict damage to unprivileged space.
 
 #### Q3: Why is `python:3.12-slim` generally preferred over `python:3.12-alpine` in Python production environments?
 > **Answer**: While Alpine Linux uses `musl libc` resulting in slightly smaller images, standard Python wheels (packages like `numpy`, `cryptography`, or C-extensions) are compiled against `glibc`. On Alpine, pip often cannot use pre-compiled manylinux wheels and must compile from C source, which requires build dependencies (`gcc`, `make`), significantly increases build time, and can introduce subtle runtime bugs. Debian slim uses `glibc`, ensuring complete compatibility while maintaining a small footprint.

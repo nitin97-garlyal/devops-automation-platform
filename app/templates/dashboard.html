@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Automation Platform</title>
+    <!-- Modern Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Platform Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">DevOps Platform</span>
+                    <span class="logo-badge">v{{ app_version }}</span>
+                </div>
+                <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close Sidebar">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">CORE PLATFORM</span>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-section="overview" id="nav-overview">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            <span>Overview</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-section="pipeline" id="nav-pipeline">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="1.05" y1="12" x2="7" y2="12"></line>
+                                <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+                            </svg>
+                            <span>CI/CD Pipeline</span>
+                            <span class="badge badge-warning">Phase 3</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-section="containers" id="nav-containers">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            <span>Docker Containers</span>
+                            <span class="badge badge-success">Active</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <span class="nav-section-label">INFRASTRUCTURE & OPS</span>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <button class="nav-link" data-section="kubernetes" id="nav-kubernetes">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 19 8.5 19 15.5 12 22 5 15.5 5 8.5 12 2"></polygon>
+                                <circle cx="12" cy="12" r="2"></circle>
+                            </svg>
+                            <span>Kubernetes</span>
+                            <span class="badge badge-neutral">Phase 4</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-section="monitoring" id="nav-monitoring">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>Monitoring</span>
+                            <span class="badge badge-neutral">Phase 5</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-section="security" id="nav-security">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>Security Scanning</span>
+                            <span class="badge badge-neutral">Phase 6</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-section="infrastructure" id="nav-infrastructure">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                            </svg>
+                            <span>Infrastructure</span>
+                            <span class="badge badge-neutral">Phase 7</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator-box">
+                    <span class="pulse-indicator"></span>
+                    <div class="status-meta">
+                        <span class="status-name" id="sidebarStatusText">System Online</span>
+                        <span class="status-sub">Env: {{ environment }}</span>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="{{ url_for('api.index') }}" target="_blank" class="footer-link">API Index (JSON) &rarr;</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content View -->
+        <main class="main-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-toggle-btn" id="mobileToggleBtn" aria-label="Open Sidebar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-root">DevOps Platform</span>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current" id="breadcrumbSectionTitle">Overview</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="env-pill">
+                        <span class="env-dot"></span>
+                        <span>{{ environment | upper }}</span>
+                    </div>
+                    <div class="refresh-controls">
+                        <label for="autoRefreshSelect" class="sr-only">Auto Refresh Interval</label>
+                        <select id="autoRefreshSelect" class="select-dropdown" title="Auto-refresh rate">
+                            <option value="0">Auto-refresh: Off</option>
+                            <option value="5" selected>Auto-refresh: 5s</option>
+                            <option value="15">Auto-refresh: 15s</option>
+                            <option value="30">Auto-refresh: 30s</option>
+                        </select>
+                        <button class="btn btn-secondary" id="refreshBtn" title="Fetch latest metrics">
+                            <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                    <div class="clock-display" id="utcClock" title="Current UTC Time">--:--:-- UTC</div>
+                </div>
+            </header>
+
+            <!-- Error Banner (Dynamic) -->
+            <div class="alert-banner alert-danger hidden" id="errorBanner">
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div class="alert-content">
+                    <strong class="alert-title">Connection Alert:</strong>
+                    <span id="errorMessage">Unable to fetch telemetry from server endpoints.</span>
+                </div>
+                <button class="alert-retry-btn" id="retryFetchBtn">Retry</button>
+            </div>
+
+            <!-- Content Container -->
+            <div class="content-body">
+                <!-- ================================================================= -->
+                <!-- 1. OVERVIEW SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section active" id="section-overview">
+                    <!-- Key Metric Cards Row -->
+                    <div class="metrics-grid">
+                        <!-- Card 1: App Health -->
+                        <div class="metric-card" id="card-health">
+                            <div class="card-header">
+                                <span class="card-title">APPLICATION HEALTH</span>
+                                <span class="card-badge badge-success" id="badgeHealth">Healthy</span>
+                            </div>
+                            <div class="card-main">
+                                <span class="card-value" id="valHealthStatus">Online</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="meta-label">Uptime:</span>
+                                <span class="meta-val" id="valUptime">--</span>
+                                <span class="meta-separator">&bull;</span>
+                                <span class="meta-label">Probe:</span>
+                                <span class="meta-val text-success">/healthz (200)</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Pipeline Status -->
+                        <div class="metric-card" id="card-pipeline">
+                            <div class="card-header">
+                                <span class="card-title">PIPELINE STATUS</span>
+                                <span class="card-badge badge-info">Phase 2 Verified</span>
+                            </div>
+                            <div class="card-main">
+                                <span class="card-value">Passing</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="meta-label">Unit Tests:</span>
+                                <span class="meta-val text-success">8/8 Passed (100%)</span>
+                                <span class="meta-separator">&bull;</span>
+                                <span class="meta-label">Next:</span>
+                                <span class="meta-val text-warning">GitLab CI</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Docker Containers -->
+                        <div class="metric-card" id="card-docker">
+                            <div class="card-header">
+                                <span class="card-title">DOCKER CONTAINER</span>
+                                <span class="card-badge badge-success" id="badgeDockerStatus">Up (Healthy)</span>
+                            </div>
+                            <div class="card-main">
+                                <span class="card-value" id="valContainerName">devops-automation-app</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="meta-label">Host Port:</span>
+                                <span class="meta-val">0.0.0.0:5000</span>
+                                <span class="meta-separator">&bull;</span>
+                                <span class="meta-label">User:</span>
+                                <span class="meta-val">appuser:10001</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: CPU Usage -->
+                        <div class="metric-card" id="card-cpu">
+                            <div class="card-header">
+                                <span class="card-title">CPU UTILIZATION</span>
+                                <span class="card-badge badge-neutral" id="badgeCpuCores">-- Cores</span>
+                            </div>
+                            <div class="card-main">
+                                <span class="card-value" id="valCpuPercent">--%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="cpuProgressBar" style="width: 0%"></div>
+                            </div>
+                            <div class="card-footer">
+                                <span class="meta-label">Load (1m, 5m, 15m):</span>
+                                <span class="meta-val font-mono" id="valCpuLoads">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Memory Usage -->
+                        <div class="metric-card" id="card-memory">
+                            <div class="card-header">
+                                <span class="card-title">MEMORY UTILIZATION</span>
+                                <span class="card-badge badge-neutral" id="badgeMemPercent">--%</span>
+                            </div>
+                            <div class="card-main">
+                                <span class="card-value" id="valMemUsed">-- MB</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar progress-bar-indigo" id="memProgressBar" style="width: 0%"></div>
+                            </div>
+                            <div class="card-footer">
+                                <span class="meta-label">Total:</span>
+                                <span class="meta-val" id="valMemTotal">-- MB</span>
+                                <span class="meta-separator">&bull;</span>
+                                <span class="meta-label">Free:</span>
+                                <span class="meta-val" id="valMemFree">-- MB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts & Telemetry Row -->
+                    <div class="dashboard-grid-2col">
+                        <!-- Real-time Chart Panel -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-header-left">
+                                    <h2 class="panel-title">Resource Utilization History</h2>
+                                    <span class="panel-subtitle">Live real-time telemetry (CPU vs Memory)</span>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item"><span class="legend-dot dot-cpu"></span> CPU %</div>
+                                    <div class="legend-item"><span class="legend-dot dot-mem"></span> Memory %</div>
+                                </div>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="resourceCanvas" width="600" height="220"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Platform Architecture & Status Breakdown -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-header-left">
+                                    <h2 class="panel-title">Platform Architecture Status</h2>
+                                    <span class="panel-subtitle">Phased implementation progress</span>
+                                </div>
+                                <span class="card-badge badge-info">2 of 7 Complete</span>
+                            </div>
+                            <div class="phases-list">
+                                <div class="phase-row phase-complete">
+                                    <div class="phase-indicator"><span class="phase-check">&check;</span></div>
+                                    <div class="phase-info">
+                                        <div class="phase-title">Phase 1: Application & Testing</div>
+                                        <div class="phase-desc">Modular Flask Factory, Pytest suite (8 tests passed), Probes (/health, /healthz, /ready)</div>
+                                    </div>
+                                    <span class="badge badge-success">Verified</span>
+                                </div>
+                                <div class="phase-row phase-complete">
+                                    <div class="phase-indicator"><span class="phase-check">&check;</span></div>
+                                    <div class="phase-info">
+                                        <div class="phase-title">Phase 2: Docker Containerization</div>
+                                        <div class="phase-desc">python:3.12-slim, non-root user (10001), Gunicorn WSGI, Docker Compose</div>
+                                    </div>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                                <div class="phase-row phase-pending">
+                                    <div class="phase-indicator"><span class="phase-num">3</span></div>
+                                    <div class="phase-info">
+                                        <div class="phase-title">Phase 3: GitLab CI/CD Pipeline</div>
+                                        <div class="phase-desc">Automated build, test, lint, and container registry push via .gitlab-ci.yml</div>
+                                    </div>
+                                    <span class="badge badge-warning">Next Phase</span>
+                                </div>
+                                <div class="phase-row phase-upcoming">
+                                    <div class="phase-indicator"><span class="phase-num">4</span></div>
+                                    <div class="phase-info">
+                                        <div class="phase-title">Phase 4: Kubernetes & Helm</div>
+                                        <div class="phase-desc">Minikube/kind deployment, Service endpoints, Helm charts</div>
+                                    </div>
+                                    <span class="badge badge-neutral">Planned</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Live API Diagnostic Console -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Interactive API & Probe Diagnostic Console</h2>
+                                <span class="panel-subtitle">Execute live HTTP requests against server endpoints</span>
+                            </div>
+                            <span class="text-muted font-mono" id="diagnosticLatency">Latency: -- ms</span>
+                        </div>
+                        <div class="diagnostic-actions">
+                            <button class="btn btn-sm btn-outline active-probe-btn" data-endpoint="/health" id="btnTestHealth">GET /health</button>
+                            <button class="btn btn-sm btn-outline" data-endpoint="/healthz" id="btnTestHealthz">GET /healthz</button>
+                            <button class="btn btn-sm btn-outline" data-endpoint="/ready" id="btnTestReady">GET /ready</button>
+                            <button class="btn btn-sm btn-outline" data-endpoint="/api/v1/ping" id="btnTestPing">GET /api/v1/ping</button>
+                            <button class="btn btn-sm btn-outline" data-endpoint="/api/v1/info" id="btnTestInfo">GET /api/v1/info</button>
+                            <button class="btn btn-sm btn-outline" data-endpoint="/api/v1/system/metrics" id="btnTestMetrics">GET /api/v1/system/metrics</button>
+                            <button class="btn btn-sm btn-outline" data-endpoint="/" id="btnTestRoot">GET / (Root)</button>
+                        </div>
+                        <div class="terminal-box">
+                            <div class="terminal-bar">
+                                <span class="terminal-circle circle-red"></span>
+                                <span class="terminal-circle circle-yellow"></span>
+                                <span class="terminal-circle circle-green"></span>
+                                <span class="terminal-url" id="diagnosticUrl">GET /health</span>
+                                <span class="terminal-status" id="diagnosticStatus">HTTP 200 OK</span>
+                            </div>
+                            <pre class="terminal-code" id="diagnosticPayload">Loading response...</pre>
+                        </div>
+                    </div>
+
+                    <!-- Recent Deployment Activity Table -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Recent Deployment Activity</h2>
+                                <span class="panel-subtitle">Real commits and release milestones from repository</span>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="deploymentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>COMMIT</th>
+                                        <th>CHANGE DESCRIPTION</th>
+                                        <th>AUTHOR</th>
+                                        <th>PHASE</th>
+                                        <th>STATUS</th>
+                                        <th>TIMESTAMP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deploymentsTableBody">
+                                    <!-- Injected via JavaScript -->
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Fetching deployment activity...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================= -->
+                <!-- 2. CI/CD PIPELINE SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section" id="section-pipeline">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">CI/CD Pipeline Architecture</h2>
+                                <span class="panel-subtitle">End-to-end automation workflow from code commit to container deployment</span>
+                            </div>
+                            <span class="card-badge badge-warning">Phase 3 In Scope Next</span>
+                        </div>
+
+                        <!-- Pipeline Visual Workflow -->
+                        <div class="pipeline-workflow">
+                            <div class="pipeline-node node-success">
+                                <div class="node-icon">&#10003;</div>
+                                <div class="node-meta">
+                                    <span class="node-title">1. Test & Lint</span>
+                                    <span class="node-status text-success">pytest (8/8 Passed)</span>
+                                </div>
+                            </div>
+                            <div class="pipeline-connector connector-success"></div>
+                            <div class="pipeline-node node-success">
+                                <div class="node-icon">&#10003;</div>
+                                <div class="node-meta">
+                                    <span class="node-title">2. Container Build</span>
+                                    <span class="node-status text-success">Docker Image Built</span>
+                                </div>
+                            </div>
+                            <div class="pipeline-connector connector-pending"></div>
+                            <div class="pipeline-node node-pending">
+                                <div class="node-icon">3</div>
+                                <div class="node-meta">
+                                    <span class="node-title">3. GitLab CI/CD</span>
+                                    <span class="node-status text-warning">Pending Phase 3</span>
+                                </div>
+                            </div>
+                            <div class="pipeline-connector"></div>
+                            <div class="pipeline-node node-upcoming">
+                                <div class="node-icon">4</div>
+                                <div class="node-meta">
+                                    <span class="node-title">4. K8s Deploy</span>
+                                    <span class="node-status text-muted">Planned Phase 4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pipeline-details-grid">
+                            <div class="detail-box">
+                                <h3>GitLab CI/CD Strategy</h3>
+                                <p>Our primary pipeline will be defined in <code>.gitlab-ci.yml</code> using GitLab Runners. It will execute test stages, build container layers using Docker-in-Docker (dind) or Kaniko, and push images to GitLab Container Registry.</p>
+                                <ul>
+                                    <li><strong>Stage 1:</strong> <code>test</code> (Python 3.12 image, pytest, coverage report)</li>
+                                    <li><strong>Stage 2:</strong> <code>security</code> (Trivy scan for vulnerabilities)</li>
+                                    <li><strong>Stage 3:</strong> <code>build</code> (Docker build & tag with git commit SHA)</li>
+                                    <li><strong>Stage 4:</strong> <code>deploy</code> (Kubernetes cluster rollout)</li>
+                                </ul>
+                            </div>
+                            <div class="detail-box">
+                                <h3>Jenkins Alternative Pipeline</h3>
+                                <p>As required by project guidelines, a dedicated <code>Jenkinsfile</code> will be built in a subsequent phase providing a declarative pipeline alternative for Jenkins CI/CD servers.</p>
+                                <span class="badge badge-neutral">Scheduled after GitLab CI</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================= -->
+                <!-- 3. DOCKER CONTAINERS SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section" id="section-containers">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Active Container Configuration</h2>
+                                <span class="panel-subtitle">Inspection and runtime profile for Phase 2 container</span>
+                            </div>
+                            <span class="card-badge badge-success">Container: devops-automation-app</span>
+                        </div>
+
+                        <div class="container-specs-grid">
+                            <div class="spec-card">
+                                <span class="spec-label">IMAGE REPOSITORY</span>
+                                <span class="spec-val font-mono">devops-automation-platform:latest</span>
+                            </div>
+                            <div class="spec-card">
+                                <span class="spec-label">BASE OPERATING SYSTEM</span>
+                                <span class="spec-val">Python 3.12-slim (Debian Bookworm)</span>
+                            </div>
+                            <div class="spec-card">
+                                <span class="spec-label">SECURITY USER</span>
+                                <span class="spec-val font-mono text-success">appuser (UID 10001:10001)</span>
+                            </div>
+                            <div class="spec-card">
+                                <span class="spec-label">PORT BINDINGS</span>
+                                <span class="spec-val font-mono">0.0.0.0:5000 &rarr; 5000/tcp</span>
+                            </div>
+                            <div class="spec-card">
+                                <span class="spec-label">WSGI RUNTIME</span>
+                                <span class="spec-val font-mono">Gunicorn 22.0.0 (2 workers, 2 threads)</span>
+                            </div>
+                            <div class="spec-card">
+                                <span class="spec-label">DOCKER HEALTHCHECK</span>
+                                <span class="spec-val font-mono text-success">curl -f http://localhost:5000/healthz</span>
+                            </div>
+                        </div>
+
+                        <div class="empty-state-box info-box">
+                            <div class="empty-state-icon">&#9432;</div>
+                            <div class="empty-state-content">
+                                <h4>Local Docker Commands Reference</h4>
+                                <p>To test and manage this container locally from your shell:</p>
+                                <pre class="code-snippet"><code>docker compose ps
+docker compose logs -f app
+docker exec devops-automation-app id
+curl -s http://127.0.0.1:5000/health</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================= -->
+                <!-- 4. KUBERNETES SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section" id="section-kubernetes">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Kubernetes Cluster Status</h2>
+                                <span class="panel-subtitle">Container orchestration with Minikube / kind</span>
+                            </div>
+                            <span class="card-badge badge-neutral">Roadmap: Phase 4</span>
+                        </div>
+
+                        <div class="empty-state-box">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 19 8.5 19 15.5 12 22 5 15.5 5 8.5 12 2"></polygon>
+                                    <circle cx="12" cy="12" r="2"></circle>
+                                </svg>
+                            </div>
+                            <div class="empty-state-content">
+                                <h3>Kubernetes Cluster Integration Pending</h3>
+                                <p>Local Kubernetes cluster configuration is scheduled for <strong>Phase 4</strong> after completing the GitLab CI/CD pipeline. No cluster is currently attached to prevent fabricated telemetry.</p>
+                                <div class="roadmap-preview">
+                                    <h4>Phase 4 Deliverables:</h4>
+                                    <ul>
+                                        <li>Local cluster setup using Minikube or kind</li>
+                                        <li>Production Deployment manifest with ReplicaSet</li>
+                                        <li>Liveness Probe mapped to <code>/healthz</code></li>
+                                        <li>Readiness Probe mapped to <code>/ready</code></li>
+                                        <li>ClusterIP & NodePort Service manifests</li>
+                                        <li>Helm Chart packaging (Chart.yaml, values.yaml, templates)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================= -->
+                <!-- 5. MONITORING SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section" id="section-monitoring">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Prometheus, Grafana & Loki Monitoring</h2>
+                                <span class="panel-subtitle">Observability, metrics aggregation, and centralized logging</span>
+                            </div>
+                            <span class="card-badge badge-neutral">Roadmap: Phase 5</span>
+                        </div>
+
+                        <div class="empty-state-box">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                            </div>
+                            <div class="empty-state-content">
+                                <h3>Observability Stack Integration Scheduled</h3>
+                                <p>Prometheus scraper, Grafana dashboards, Alertmanager, and Loki log shipper will be deployed in <strong>Phase 5</strong>. The application currently exposes real OS metrics via <code>/api/v1/system/metrics</code>.</p>
+                                <div class="roadmap-preview">
+                                    <h4>Phase 5 Deliverables:</h4>
+                                    <ul>
+                                        <li>Prometheus metrics exporter endpoint (<code>/metrics</code>)</li>
+                                        <li>Prometheus service scrape configuration</li>
+                                        <li>Grafana dashboards for Request Latency, QPS, Error Rates, CPU & RAM</li>
+                                        <li>Alertmanager alerting rules for pod restarts and high latency</li>
+                                        <li>Loki log forwarding for container stdout/stderr streams</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================= -->
+                <!-- 6. SECURITY SCANNING SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section" id="section-security">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Security & Vulnerability Management</h2>
+                                <span class="panel-subtitle">Container image hardening, non-root controls, and CVE scanning</span>
+                            </div>
+                            <span class="card-badge badge-info">Hardening Active &bull; Phase 6 Planned</span>
+                        </div>
+
+                        <div class="security-audit-grid">
+                            <div class="audit-item audit-passed">
+                                <div class="audit-icon">&#10003;</div>
+                                <div class="audit-meta">
+                                    <strong>Non-Root User Enforcement</strong>
+                                    <span>Container runs as system user <code>appuser:10001</code>. Mitigates container escape exploits.</span>
+                                </div>
+                                <span class="badge badge-success">Enforced</span>
+                            </div>
+                            <div class="audit-item audit-passed">
+                                <div class="audit-icon">&#10003;</div>
+                                <div class="audit-meta">
+                                    <strong>Build Context Secret Isolation</strong>
+                                    <span><code>.dockerignore</code> explicitly excludes <code>.env</code>, private keys (<code>*.key</code>, <code>*.pem</code>), and certificates.</span>
+                                </div>
+                                <span class="badge badge-success">Enforced</span>
+                            </div>
+                            <div class="audit-item audit-passed">
+                                <div class="audit-icon">&#10003;</div>
+                                <div class="audit-meta">
+                                    <strong>Minimal Base Image Surface</strong>
+                                    <span>Uses <code>python:3.12-slim</code> with package caches cleaned via <code>rm -rf /var/lib/apt/lists/*</code>.</span>
+                                </div>
+                                <span class="badge badge-success">Enforced</span>
+                            </div>
+                            <div class="audit-item audit-pending">
+                                <div class="audit-icon">&#9888;</div>
+                                <div class="audit-meta">
+                                    <strong>Trivy Image Vulnerability Scan</strong>
+                                    <span>Automated scanning of image layers for CVEs and misconfigurations in CI/CD pipeline.</span>
+                                </div>
+                                <span class="badge badge-warning">Phase 6</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================= -->
+                <!-- 7. INFRASTRUCTURE SECTION -->
+                <!-- ================================================================= -->
+                <section class="tab-section" id="section-infrastructure">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-header-left">
+                                <h2 class="panel-title">Host & Cloud Infrastructure</h2>
+                                <span class="panel-subtitle">Runtime host environment and upcoming Terraform AWS provisioning</span>
+                            </div>
+                            <span class="card-badge badge-neutral">Roadmap: Phase 7</span>
+                        </div>
+
+                        <div class="infra-specs-grid">
+                            <div class="infra-card">
+                                <h3>Current Host Runtime</h3>
+                                <ul>
+                                    <li><strong>Operating System:</strong> <span id="infraOs">Linux</span></li>
+                                    <li><strong>Architecture:</strong> <span id="infraPlatform">x86_64</span></li>
+                                    <li><strong>Python Engine:</strong> <span id="infraPython">3.12</span></li>
+                                    <li><strong>Disk Capacity:</strong> <span id="infraDisk">--</span></li>
+                                </ul>
+                            </div>
+                            <div class="infra-card">
+                                <h3>AWS Cloud Target (Phase 7)</h3>
+                                <ul>
+                                    <li><strong>Provisioner:</strong> Terraform Infrastructure as Code (IaC)</li>
+                                    <li><strong>Compute:</strong> AWS ECS / EKS Managed Cluster</li>
+                                    <li><strong>Network:</strong> AWS Custom VPC, Public/Private Subnets, NAT Gateway</li>
+                                    <li><strong>Traffic:</strong> AWS Application Load Balancer with TLS/HTTPS</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Platform JavaScript -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
