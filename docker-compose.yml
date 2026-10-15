@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: devops-automation-platform:latest
+    container_name: devops-automation-app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - APP_NAME=DevOps-Automation-Platform
+      - APP_VERSION=1.0.0
+      - PORT=5000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

@@ -36,17 +36,24 @@ ENV/
 htmlcov/
 tests/
 
-# Local configuration & environment files
+# Environment Variables & Secrets (CRITICAL for Container Security)
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.cert
+*.crt
+id_rsa
+id_ed25519
 
 # IDE specific files
 .vscode/
 .idea/
 *.swp
 *.swo
+.DS_Store
 
-# Documentation and CI/CD scratchpads
+# Documentation and scratchpads
 README.md
 docs/
